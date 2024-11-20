@@ -13,13 +13,13 @@ import trangulation as tri
 
 #open beide camera's
 cap_right = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-cap_left = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+cap_left = cv2.VideoCapture(2, cv2.CAP_DSHOW)
 
 frame_rate = 120 #zelf te kiezen (max is 120fps)
 
 B = 9               #Afstand tussen de 2 camera's (cm)
 f = 6               #De lens van de camera zijn brandpunt lengte (cm)
-alpha = 56.6        #field of view van de camera (horizontale vlak [°])
+alpha = 49.99        #field of view van de camera (horizontale vlak [49.99 graden])
 
 count = -1
 

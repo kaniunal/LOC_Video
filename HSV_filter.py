@@ -13,7 +13,7 @@ def add_HSV_filter(frame, camera):
 
     l_b_r = np.array([60, 110, 50])         #hier bepaald ge naar welke kleur ge zoekt
     u_b_r = np.array([255, 255, 255])
-    l_b_l = np.array([143, 110, 50])
+    l_b_l = np.array([60, 80, 60])
     u_b_l = np.array([255, 255, 255])
     
     #alle stukken van de afbeelding die in de range passen maken we wit
