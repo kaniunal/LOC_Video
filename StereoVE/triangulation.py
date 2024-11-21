@@ -9,7 +9,10 @@ def find_depth(right_point, left_point, frame_right, frame_left, baseline,f, alp
     # CONVERT FOCAL LENGTH f FROM [mm] TO [pixel]:
     height_right, width_right, depth_right = frame_right.shape
     height_left, width_left, depth_left = frame_left.shape
-
+    
+    print('depth left =', depth_left, '\n')
+    print('depth right =', depth_right, '\n')
+    
     if width_right == width_left:
         f_pixel = (width_right * 0.5) / np.tan(alpha * 0.5 * np.pi/180)
 
