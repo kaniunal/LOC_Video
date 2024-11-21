@@ -1,54 +1,49 @@
 import numpy as np
 import cv2 as cv
 import glob
-
-
+import sys  # Import the sys module
 
 ################ FIND CHESSBOARD CORNERS - OBJECT POINTS AND IMAGE POINTS #############################
 
-chessboardSize = (9,6)
-frameSize = (640,480)
-
-
+chessboardSize = (9, 6)
+frameSize = (640, 480)
 
 # termination criteria
 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
-
 # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
 objp = np.zeros((chessboardSize[0] * chessboardSize[1], 3), np.float32)
-objp[:,:2] = np.mgrid[0:chessboardSize[0],0:chessboardSize[1]].T.reshape(-1,2)
-
+objp[:, :2] = np.mgrid[0:chessboardSize[0], 0:chessboardSize[1]].T.reshape(-1, 2)
 
 # Arrays to store object points and image points from all the images.
-objpoints = [] # 3d point in real world space
-imgpointsL = [] # 2d points in image plane.
-imgpointsR = [] # 2d points in image plane.
+objpoints = []  # 3d point in real world space
+imgpointsL = []  # 2d points in image plane.
+imgpointsR = []  # 2d points in image plane.
 
+imagesLeft = glob.glob('StereoVE/images/stereoLeft/*.png')
+imagesRight = glob.glob('StereoVE/images/stereoRight/*.png')
 
-imagesLeft = glob.glob('images/stereoLeft/*.png')
-imagesRight = glob.glob('images/stereoRight/*.png')
-
+print("Number of images found: ", len(imagesLeft))
+print("Number of images found: ", len(imagesRight))
 for imgLeft, imgRight in zip(imagesLeft, imagesRight):
-
+    print("Processing images: ", imgLeft, imgRight)
     imgL = cv.imread(imgLeft)
     imgR = cv.imread(imgRight)
+
     grayL = cv.cvtColor(imgL, cv.COLOR_BGR2GRAY)
     grayR = cv.cvtColor(imgR, cv.COLOR_BGR2GRAY)
 
-    # Find the chess board corners
     retL, cornersL = cv.findChessboardCorners(grayL, chessboardSize, None)
     retR, cornersR = cv.findChessboardCorners(grayR, chessboardSize, None)
 
     # If found, add object points, image points (after refining them)
-    if retL and retR == True:
-
+    if retL and retR:
         objpoints.append(objp)
 
-        cornersL = cv.cornerSubPix(grayL, cornersL, (11,11), (-1,-1), criteria)
+        cornersL = cv.cornerSubPix(grayL, cornersL, (11, 11), (-1, -1), criteria)
         imgpointsL.append(cornersL)
 
-        cornersR = cv.cornerSubPix(grayR, cornersR, (11,11), (-1,-1), criteria)
+        cornersR = cv.cornerSubPix(grayR, cornersR, (11, 11), (-1, -1), criteria)
         imgpointsR.append(cornersR)
 
         # Draw and display the corners
@@ -56,15 +51,20 @@ for imgLeft, imgRight in zip(imagesLeft, imagesRight):
         cv.imshow('img left', imgL)
         cv.drawChessboardCorners(imgR, chessboardSize, cornersR, retR)
         cv.imshow('img right', imgR)
+        
+        # Wait for a key press to close the windows
         cv.waitKey(1000)
-
+    else:
+        print("Chessboard corners not found in one or both images.")
 
 cv.destroyAllWindows()
 
-
-
-
 ############## CALIBRATION #######################################################
+
+# Check if objpoints and imgpointsL are not empty
+if len(objpoints) == 0 or len(imgpointsL) == 0 or len(imgpointsR) == 0:
+    print("Error: No chessboard corners were found in the images.")
+    sys.exit(1)
 
 retL, cameraMatrixL, distL, rvecsL, tvecsL = cv.calibrateCamera(objpoints, imgpointsL, frameSize, None, None)
 heightL, widthL, channelsL = imgL.shape
@@ -100,7 +100,7 @@ stereoMapL = cv.initUndistortRectifyMap(newCameraMatrixL, distL, rectL, projMatr
 stereoMapR = cv.initUndistortRectifyMap(newCameraMatrixR, distR, rectR, projMatrixR, grayR.shape[::-1], cv.CV_16SC2)
 
 print("Saving parameters!")
-cv_file = cv.FileStorage('stereoMap.xml', cv.FILE_STORAGE_WRITE)
+cv_file = cv.FileStorage('StereoVE/stereoMap.xml', cv.FILE_STORAGE_WRITE)
 
 cv_file.write('stereoMapL_x',stereoMapL[0])
 cv_file.write('stereoMapL_y',stereoMapL[1])
@@ -108,5 +108,3 @@ cv_file.write('stereoMapR_x',stereoMapR[0])
 cv_file.write('stereoMapR_y',stereoMapR[1])
 
 cv_file.release()
-
-

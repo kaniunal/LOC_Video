@@ -23,9 +23,9 @@ cap_left =  cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
 # Stereo vision setup parameters
 frame_rate = 120    #Camera frame rate (maximum at 120 fps)
-B = 9               #Distance between the cameras [cm]
+B = 35               #Distance between the cameras [cm]
 f = 8              #Camera lense's focal length [mm]
-alpha = 56.6        #Camera field of view in the horisontal plane [degrees]
+alpha = 49.9        #Camera field of view in the horisontal plane [degrees]
 
 
 
