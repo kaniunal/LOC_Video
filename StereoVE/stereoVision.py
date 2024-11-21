@@ -20,6 +20,7 @@ mp_draw = mp.solutions.drawing_utils
 cap_right = cv2.VideoCapture(2, cv2.CAP_DSHOW)                    
 cap_left =  cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
+#Test
 
 # Stereo vision setup parameters
 frame_rate = 120    #Camera frame rate (maximum at 120 fps)
